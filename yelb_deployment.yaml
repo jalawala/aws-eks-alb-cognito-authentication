@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: yelb-ns
+  name: yelb-ui
+  labels:
+    app: yelb-ui
+    tier: frontend
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: yelb-ui
+    tier: frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: yelb-ns
+  name: yelb-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yelb-ui
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: yelb-ui
+        tier: frontend
+    spec:
+      containers:
+        - name: yelb-ui
+          image: 000474600478.dkr.ecr.us-east-1.amazonaws.com/yelb-ui:latest
+          env:
+            - name: AWS_REGION
+              value: "us-east-1"          
+          ports:
+            - containerPort: 80
+---
